@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!--#if (unoMauiClassLibrary)-->
+    <ImplicitUsings Condition="$(ImplicitUsings) == ''">enable</ImplicitUsings>
+    <Nullable Condition="$(Nullable) == ''">enable</Nullable>
+    <ManagePackageVersionsCentrally Condition="$(ManagePackageVersionsCentrally) == ''">true</ManagePackageVersionsCentrally>
+
+    <!--#endif-->
+    <!--#if (useWinAppSdk)-->
+    <TargetFrameworks Condition="$([MSBuild]::IsOSPlatform('windows')) or '$(EnableWindowsTargeting)' == 'true'">$baseTargetFramework$-windows10.0.19041</TargetFrameworks>
+    <!--#endif-->
+    <TargetFrameworks>
+      $baseTargetFramework$;
+      <!--#if (useAndroid)-->
+      $baseTargetFramework$-android;
+      <!--#endif-->
+      <!--#if (useIOS)-->
+      $baseTargetFramework$-ios;
+      <!--#endif-->
+      <!--#if (useMacCatalyst)-->
+      $baseTargetFramework$-maccatalyst;
+      <!--#endif-->
+      <!--#if (useWinAppSdk)-->
+      $(TargetFrameworks);
+      <!--#endif-->
+    </TargetFrameworks>
+
+    <UseMaui>true</UseMaui>
+    <SingleProject>true</SingleProject>
+  </PropertyGroup>
+  <!--#if (unoMauiClassLibrary)-->
+
+  <Choose>
+    <!--#if (useAndroid)-->
+    <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">
+      <PropertyGroup>
+        <SupportedOSPlatformVersion>21.0</SupportedOSPlatformVersion>
+      </PropertyGroup>
+    </When>
+    <!--#endif-->
+    <!--#if (useIOS)-->
+    <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">
+      <PropertyGroup>
+        <SupportedOSPlatformVersion>14.2</SupportedOSPlatformVersion>
+      </PropertyGroup>
+    </When>
+    <!--#endif-->
+    <!--#if (useMacCatalyst)-->
+    <When Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">
+      <PropertyGroup>
+        <SupportedOSPlatformVersion>14.0</SupportedOSPlatformVersion>
+      </PropertyGroup>
+    </When>
+    <!--#endif-->
+    <!--#if (useWinAppSdk)-->
+    <When Condition="$(TargetFramework.Contains('windows10'))">
+      <PropertyGroup>
+        <SupportedOSPlatformVersion>10.0.18362.0</SupportedOSPlatformVersion>
+        <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+        <RuntimeIdentifiers>win-x86;win-x64;win-arm64</RuntimeIdentifiers>
+        <EnableCoreMrtTooling Condition=" '$(BuildingInsideVisualStudio)' != 'true' ">false</EnableCoreMrtTooling>
+      </PropertyGroup>
+    </When>
+    <!--#endif-->
+  </Choose>
+  <!--#endif-->
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Maui.Controls" />
+    <PackageReference Include="Microsoft.Maui.Controls.Compatibility" />
+  </ItemGroup>
+
+</Project>

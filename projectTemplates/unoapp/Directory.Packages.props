@@ -1,0 +1,46 @@
+﻿<Project ToolsVersion="15.0">
+  <!--
+    To update the version of Uno, you should instead update the Sdk version in the global.json file.
+
+    See https://aka.platform.uno/using-uno-sdk for more information.
+    See https://aka.platform.uno/using-uno-sdk#implicit-packages for more information regarding the Implicit Packages.
+  -->
+  <ItemGroup>
+    <!--#if (useTestSolutionFolder)-->
+    <PackageVersion Include="coverlet.collector" Version="$CoverletCollector$" />
+    <PackageVersion Include="FluentAssertions" Version="$FluentAssertions$" />
+    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="$MicrosoftTestSdk$" />
+    <PackageVersion Include="NUnit" Version="$NUnit$" />
+    <PackageVersion Include="NUnit3TestAdapter" Version="$NUnit3TestAdapter$" />
+    <!--#if (useGitHubActions)-->
+    <PackageVersion Include="GitHubActionsTestLogger" Version="2.3.3" />
+    <!--#endif-->
+    <!--#endif-->
+    <!--#if (useUITests)-->
+    <PackageVersion Include="Newtonsoft.Json" Version="$NewtonsoftJson$" />
+    <!--#endif-->
+    <!--#if (useAspNetCoreSerilogPackage)-->
+    <PackageVersion Include="Serilog.AspNetCore" Version="8.0.1" />
+    <!--#endif-->
+    <!--#if (useServer)-->
+    <PackageVersion Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <!--#endif-->
+    <!--#if (useUITests)-->
+    <PackageVersion Include="Uno.UITest.Helpers" Version="$UnoUITestHelpersVersion$" />
+    <PackageVersion Include="Xamarin.UITest" Version="$XamarinUITest$" />
+    <!--#endif-->
+    <!--#if (mauiEmbedding)-->
+    <PackageVersion Include="Microsoft.Maui.Controls" Version="$(MauiVersion)" />
+    <PackageVersion Include="Microsoft.Maui.Controls.Compatibility" Version="$(MauiVersion)" />
+    <!--#endif-->
+    <!--#if (enableDeveloperMode)-->
+    $$EnableDeveloperMode_CPM_PackageVersion$$
+    <!--#endif-->
+  </ItemGroup>
+  <!--#if (useWasmPackageVersions)-->
+
+  <ItemGroup Condition="$(UsingUnoSdk) != 'true'">
+    <PackageVersion Include="Uno.Wasm.Bootstrap.Server" Version="$UnoWasmBootstrapVersion$" />
+  </ItemGroup>
+  <!--#endif-->
+</Project>

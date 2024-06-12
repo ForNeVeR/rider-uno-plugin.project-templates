@@ -1,0 +1,136 @@
+{
+  "$schema": "http://json.schemastore.org/dotnetcli.host",
+  "symbolInfo": {
+    "preset": {
+      "longName": "preset",
+      "shortName": "preset"
+    },
+    "appId": {
+      "longName": "app-id",
+      "shortName": "id"
+    },
+    "publisher": {
+      "longName": "publisher",
+      "shortName": "pub"
+    },
+    "tfm": {
+      "longName": "tfm",
+      "shortName": "tfm"
+    },
+    "architecture": {
+      "longName": "presentation",
+      "shortName": "presentation"
+    },
+    "markup": {
+      "longName": "markup",
+      "shortName": "markup"
+    },
+    "appTheme": {
+      "longName": "app-theme",
+      "shortName": "theme"
+    },
+    "platforms": {
+      "longName": "platforms",
+      "shortName": "platforms"
+    },
+    "server": {
+      "longName": "server",
+      "shortName": "server"
+    },
+    "wasmPwaManifest": {
+      "longName": "wasm-pwa-manifest",
+      "shortName": "pwa"
+    },
+    "tests": {
+      "longName": "tests",
+      "shortName": "tests"
+    },
+    "toolkit": {
+      "longName": "toolkit",
+      "shortName": "toolkit"
+    },
+    "dependencyInjection": {
+      "longName": "dependency-injection",
+      "shortName": "di"
+    },
+    "configuration": {
+      "longName": "configuration",
+      "shortName": "config"
+    },
+    "http": {
+      "longName": "use-http",
+      "shortName": "http"
+    },
+    "localization": {
+      "longName": "localization",
+      "shortName": "loc"
+    },
+    "cultures": {
+      "longName": "cultures",
+      "shortName": "cultures"
+    },
+    "logging": {
+      "longName": "logging",
+      "shortName": "log"
+    },
+    "navigation": {
+      "longName": "navigation",
+      "shortName": "nav"
+    },
+    "authentication": {
+      "longName": "authentication",
+      "shortName": "auth"
+    },
+    "vscode": {
+      "longName": "vscode",
+      "shortName": "vscode"
+    },
+    "mauiEmbedding": {
+      "longName": "maui-embedding",
+      "shortName": "maui"
+    },
+    "mediaElement": {
+      "longName": "media-element",
+      "shortName": "media"
+    },
+    "skipRestore": {
+      "longName": "skip-restore",
+      "shortName": "skip"
+    },
+    "themeService": {
+      "longName": "theme-service",
+      "shortName": "theme-service"
+    },
+    "dspGenerator": {
+      "longName": "dsp",
+      "shortName": "dsp"
+    },
+    "continuousIntegration": {
+      "longName": "continuous-integration",
+      "shortName": "ci"
+    },
+    "defaultBranchName": {
+      "longName": "default-branch-name",
+      "shortName": "branch"
+    },
+    "wasmMultiThreading": {
+      "longName": "wasm-multi-threading",
+      "shortName": "wasm-multi-threading"
+    },
+    "unoWinUIVersion": {
+      "isHidden": true
+    },
+    "unoSdkVersion": {
+      "isHidden": true
+    },
+    "unoUITestHelpersVersion": {
+      "isHidden": true
+    },
+    "enableDeveloperMode": {
+      "isHidden": true
+    },
+    "isVsix": {
+      "isHidden": true
+    }
+  }
+}

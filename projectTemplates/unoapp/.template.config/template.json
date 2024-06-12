@@ -1,0 +1,3206 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Uno Platform",
+  "classifications": [
+    "Multi-platform",
+    "Uno Platform",
+    "Android",
+    "iOS",
+    "macOS",
+    "Mac Catalyst",
+    "Windows",
+    "Linux",
+    "WebAssembly",
+    "WinUI"
+  ],
+  "generatorVersions": "[1.0.0.0-*)",
+  "name": "Uno Platform App",
+  "identity": "Uno.Platform.UnoApp.WinUI.netcoremobile.CSharp",
+  "groupIdentity": "Uno.Platform.UnoApp.WinUI.netcoremobile",
+  "description": "Solution template for creating a multi-platform C# & XAML application targeting Windows App SDK, Android, iOS, macOS, WebAssembly, Skia Desktop.",
+  "precedence": "99",
+  "tags": {
+    "language": "C#",
+    "type": "solution",
+    "editorTreatAs": "solution"
+  },
+  "shortName": "unoapp",
+  "sourceName": "MyExtensionsApp.1",
+  "defaultName": "UnoApp",
+  "placeholderFilename": "template-ignore",
+  "preferNameDirectory": true,
+  "guids": [
+    "C7433AE2-B1A0-4C1A-887E-5CAA7AAF67A6", // Solution file (SolutionGuid)
+    "FAA2C1DE-F859-4053-9573-6245F7E832EF", // src solution folder
+    "BACDD33A-304C-46C4-9B00-AC166978D7E0", // (core) library
+    "BA1ACE40-623E-4F42-94BB-11CF4D52C445", // Web solution folder
+    "1ADD4B1D-2758-4ED5-963A-FE3F4206BF20", // Server
+    "7EF70027-9874-4112-A14F-33F02169CF8A", // Tests Solution folder
+    "EB3EB846-D5CB-4140-834F-1CC40A0FD6D0", // Tests
+    "7229D034-7DBE-4FD7-B0E4-38D617571F93", // UITests
+    "F5EAE47C-F7DF-4D61-8A30-92251720AC4B", // Mobile Application Id
+    "5ED31500-DF01-462D-9436-EC2EDCAA1965", // DataContracts
+    "85978B6F-B8F7-4FFC-A392-37A1FD49E0C2" // MauiControls
+  ],
+  "symbols": {
+    "preset": {
+      "displayName": "Preset",
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "blank",
+      "description": "Selects whether to use the recommended or blank app defaults for the template",
+      "choices": [
+        {
+          "choice": "recommended",
+          "description": "Recommended set of options to create a production-ready app targeting multiple platforms",
+          "displayName": "Recommended"
+        },
+        {
+          "choice": "blank",
+          "description": "Smallest set of options, with no extra dependencies, to create an app targeting multiple platforms",
+          "displayName": "Blank"
+        }
+      ]
+    },
+    "sanitizedName": {
+      "type": "generated",
+      "generator": "regex",
+      "parameters": {
+        "source": "name",
+        "steps": [
+          {
+            "regex": "[^a-zA-Z\\d:]+",
+            "replacement": "-"
+          }
+        ]
+      },
+      "replaces": "$sanitizedProjectName$"
+    },
+    "failBuildOnInvalidProjectName": {
+      "type": "generated",
+      "generator": "regexMatch",
+      "datatype": "bool",
+      "parameters": {
+        "source": "name",
+        "pattern": "\\s"
+      }
+    },
+    "appId": {
+      "displayName": "Application ID",
+      "type": "parameter",
+      "datatype": "string",
+      "description": "The application identifier (e.g. com.mycompany.myapp), used by the Android, iOS, and Mac targets."
+    },
+    "appIdDefault": {
+      "type": "generated",
+      "generator": "join",
+      "parameters": {
+        "symbols": [
+          {
+            "type": "const",
+            "value": "com.companyname."
+          },
+          {
+            "type": "ref",
+            "value": "sanitizedName"
+          }
+        ]
+      }
+    },
+    "appIdDefaultLower": {
+      "type": "generated",
+      "generator": "casing",
+      "parameters": {
+        "source": "appIdDefault",
+        "toLower": true
+      }
+    },
+    "appIdEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "appId",
+        "fallbackVariableName": "appIdDefaultLower"
+      },
+      "replaces": "com.companyname.myextensionsapp"
+    },
+    "identityName": {
+      "type": "generated",
+      "generator": "regex",
+      "parameters": {
+        "source": "name",
+        "steps": [
+          {
+            "regex": "[^a-zA-Z\\d\\.:]+",
+            "replacement": "-"
+          }
+        ]
+      },
+      "replaces": "$identityName$"
+    },
+    "publisher": {
+      "displayName": "Publisher",
+      "description": "This sets the Identity Publisher of the Package.appxmanifest file. This should match the subject of the signing certificate and will be used for the default development certificate. (e.g. O=Uno Platform)",
+      "type": "parameter",
+      "datatype": "string"
+    },
+    "publisherEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "publisher",
+        "fallbackVariableName": "name"
+      }
+    },
+    "publisherEvaluatorSanitizer": {
+      "type": "generated",
+      "generator": "regex",
+      "parameters": {
+        "source": "publisherEvaluator",
+        "steps": [
+          {
+            "regex": "&",
+            "replacement": "&amp;"
+          }
+        ]
+      },
+      "replaces": "$appPublisher$"
+    },
+    "tfm": {
+      "displayName": "Target Framework",
+      "type": "parameter",
+      "datatype": "choice",
+      "enableQuotelessLiterals": true,
+      "replaces": "$baseTargetFramework$",
+      "defaultValue": "net8.0",
+      "description": "Select the .NET version of your solution",
+      "choices": [
+        {
+          "choice": "net8.0",
+          "displayName": ".NET 8.0",
+          "description": "Target .NET 8.0 (Long Term Support)"
+        },
+        {
+          "choice": "net9.0",
+          "displayName": ".NET 9.0",
+          "description": "Target .NET 9.0 (Preview)"
+        }
+      ]
+    },
+    "architecture": {
+      "displayName": "Presentation",
+      "description": "Select the design pattern for your application",
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "none",
+          "description": "No additional presentation framework",
+          "displayName": "None"
+        },
+        {
+          "choice": "mvvm",
+          "description": "Use the Model-View-ViewModel (MVVM) design pattern",
+          "displayName": "MVVM"
+        },
+        {
+          "choice": "mvux",
+          "description": "Use the Model-View-Update eXtended (MVUX) design pattern",
+          "displayName": "MVUX"
+        }
+      ]
+    },
+    "markup": {
+      "displayName": "UI Markup",
+      "description": "How would you like to code your UI",
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "xaml",
+          "description": "Use XAML for the UI",
+          "displayName": "XAML"
+        },
+        {
+          "choice": "csharp",
+          "description": "Use C# Markup for the UI",
+          "displayName": "C# Markup"
+        }
+      ],
+      "defaultValue": "xaml"
+    },
+    "appTheme": {
+      "displayName": "Theme",
+      "description": "Selects the theme design system for the application.",
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "material",
+          "description": "Use the Material design theme",
+          "displayName": "Material"
+        },
+        {
+          "choice": "fluent",
+          "description": "Use the Fluent design theme",
+          "displayName": "Fluent"
+        },
+        {
+          "choice": "cupertino",
+          "description": "Use the Cupertino design theme",
+          "displayName": "Cupertino"
+        }
+      ]
+    },
+    "platforms": {
+      "displayName": "Platforms",
+      "description": "What platforms would you like to target",
+      "type": "parameter",
+      "datatype": "choice",
+      "enableQuotelessLiterals": true,
+      "allowMultipleValues": true,
+      "defaultValue": "android|ios|maccatalyst|wasm|windows|desktop",
+      "choices": [
+        {
+          "choice": "android",
+          "displayName": "Android",
+          "description": "Enables the Android target platform"
+        },
+        {
+          "choice": "ios",
+          "displayName": "iOS",
+          "description": "Enables the iOS target platform"
+        },
+        {
+          "choice": "maccatalyst",
+          "displayName": "macOS (Catalyst)",
+          "description": "Enables the macOS (Catalyst) target platform"
+        },
+        {
+          "choice": "windows",
+          "displayName": "Windows",
+          "description": "Enables the Windows with WinAppSdk (WinUI 3) target platform"
+        },
+        {
+          "choice": "wasm",
+          "displayName": "WebAssembly",
+          "description": "Enables the WebAssembly target platform"
+        },
+        {
+          "choice": "desktop",
+          "displayName": "Desktop",
+          "description": "Enables Skia Desktop (Linux X11/Framebuffer, macOS, Windows)"
+        }
+      ]
+    },
+    "tests": {
+      "displayName": "Tests",
+      "description": "Decide on a testing strategy",
+      "type": "parameter",
+      "datatype": "choice",
+      "allowMultipleValues": true,
+      "enableQuotelessLiterals": true,
+      "choices": [
+        {
+          "choice": "none",
+          "description": "Disable testing",
+          "displayName": "None"
+        },
+        {
+          "choice": "unit",
+          "description": "Include a project for authoring traditional unit tests",
+          "displayName": "Unit Tests"
+        },
+        {
+          "choice": "ui",
+          "description": "Include a project for authoring UI tests using the Uno.UITest framework",
+          "displayName": "UI Tests"
+        }
+      ]
+    },
+    "presetTestsDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "unit|ui"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "none"
+          }
+        ]
+      }
+    },
+    "testsEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "tests",
+        "fallbackVariableName": "presetTestsDefault"
+      }
+    },
+    "server": {
+      "displayName": "Server",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false",
+      "description": "Includes a Server project for an API & host for the WebAssembly project"
+    },
+    "toolkit": {
+      "displayName": "Toolkit",
+      "description": "Includes Uno.Toolkit for additional controls and helper classes",
+      "type": "parameter",
+      "datatype": "bool"
+    },
+    "dependencyInjection": {
+      "displayName": "Dependency Injection",
+      "description": "Use dependency injection for registering and accessing services",
+      "type": "parameter",
+      "datatype": "bool"
+    },
+    "configuration": {
+      "displayName": "Configuration",
+      "description": "Load configuration information from appsettings.json",
+      "type": "parameter",
+      "datatype": "bool"
+    },
+    "http": {
+      "displayName": "HTTP",
+      "description": "Register native handlers for http and setup Refit support",
+      "type": "parameter",
+      "datatype": "bool"
+    },
+    "localization": {
+      "displayName": "Localization",
+      "description": "Configures support for localizing resources throughout the application",
+      "type": "parameter",
+      "datatype": "bool"
+    },
+    "cultures": {
+      "displayName": "Locales",
+      "description": "Adds support for additional locales",
+      "type": "parameter",
+      "datatype": "choice",
+      "allowMultipleValues": true,
+      "defaultValue": "es|fr|pt-BR",
+      "choices": [
+        {
+          "choice": "ar",
+          "description": "Arabic",
+          "displayName": "Arabic"
+        },
+        {
+          "choice": "cs",
+          "description": "Czech",
+          "displayName": "Czech"
+        },
+        {
+          "choice": "da",
+          "description": "Danish",
+          "displayName": "Danish"
+        },
+        {
+          "choice": "nl",
+          "description": "Dutch",
+          "displayName": "Dutch"
+        },
+        {
+          "choice": "fr",
+          "description": "French",
+          "displayName": "French"
+        },
+        {
+          "choice": "de",
+          "description": "German",
+          "displayName": "German"
+        },
+        {
+          "choice": "es",
+          "description": "Spanish",
+          "displayName": "Spanish"
+        },
+        {
+          "choice": "it",
+          "description": "Italian",
+          "displayName": "Italian"
+        },
+        {
+          "choice": "ja",
+          "description": "Japanese",
+          "displayName": "Japanese"
+        },
+        {
+          "choice": "ko",
+          "description": "Korean",
+          "displayName": "Korean"
+        },
+        {
+          "choice": "pt-BR",
+          "description": "Portuguese (Brazil)",
+          "displayName": "Portuguese (Brazil)"
+        },
+        {
+          "choice": "ru",
+          "description": "Russian",
+          "displayName": "Russian"
+        },
+        {
+          "choice": "sv",
+          "description": "Swedish",
+          "displayName": "Swedish"
+        },
+        {
+          "choice": "tr",
+          "description": "Turkish",
+          "displayName": "Turkish"
+        },
+        {
+          "choice": "uk",
+          "description": "Ukrainian",
+          "displayName": "Ukrainian"
+        },
+        {
+          "choice": "vi",
+          "description": "Vietnamese",
+          "displayName": "Vietnamese"
+        },
+        {
+          "choice": "zh-Hans",
+          "description": "Chinese (Simplified)",
+          "displayName": "Chinese (Simplified)"
+        },
+        {
+          "choice": "zh-Hant",
+          "description": "Chinese (Traditional)",
+          "displayName": "Chinese (Traditional)"
+        }
+      ]
+    },
+    "logging": {
+      "displayName": "Logging",
+      "description": "Configures logging support in the application",
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "none",
+          "description": "Debug Logging for the Application Framework to the Console",
+          "displayName": "Console"
+        },
+        {
+          "choice": "default",
+          "description": "Logging is accessible via dependency injection and writes output to Console",
+          "displayName": "Default"
+        },
+        {
+          "choice": "serilog",
+          "description": "Logging is accessible via dependency injection and uses Serilog",
+          "displayName": "Serilog"
+        }
+      ]
+    },
+    "navigation": {
+      "displayName": "Navigation",
+      "description": "Configures navigation in the application",
+      "type": "parameter",
+      "datatype": "choice",
+      "choices": [
+        {
+          "choice": "regions",
+          "displayName": "Regions",
+          "description": "Uses Uno.Extensions.Navigation to navigate using regions"
+        },
+        {
+          "choice": "blank",
+          "displayName": "Blank",
+          "description": "Provides Blank App experience with default WinUI Frame Navigation"
+        }
+      ]
+    },
+    "authentication": {
+      "displayName": "Authentication",
+      "description": "Configures authentication support in the application",
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "none",
+      "choices": [
+        {
+          "choice": "none",
+          "description": "No authentication",
+          "displayName": "None"
+        },
+        {
+          "choice": "custom",
+          "description": "Application uses custom logic to authenticate user",
+          "displayName": "Custom"
+        },
+        {
+          "choice": "msal",
+          "description": "Application uses MSAL to authenticate user",
+          "displayName": "MSAL"
+        },
+        {
+          "choice": "oidc",
+          "description": "Application uses OpenID Connect to authenticate user",
+          "displayName": "OIDC"
+        },
+        {
+          "choice": "Web",
+          "description": "Application uses web based authentication to authenticate user",
+          "displayName": "Web"
+        }
+      ]
+    },
+    "themeService": {
+      "displayName": "Theme Service",
+      "description": "Include theme service for switching between Dark, Light and System themes",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
+    "unoSvg": {
+      "displayName": "Uno.WinUI.Svg",
+      "description": "Include Uno.WinUI.Svg for SVG support",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
+    "unoLottie": {
+      "displayName": "Uno.WinUI.Lottie",
+      "description": "Include Uno.WinUI.Lottie for Lottie support",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
+    "dspGenerator": {
+      "displayName": "Import Uno DSP",
+      "description": "Import a Uno DSP theme file to override Material colors",
+      "type": "parameter",
+      "datatype": "bool"
+    },
+    "presetDspDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "bool",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "dspGeneratorEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "dspGenerator",
+        "fallbackVariableName": "presetDspDefault"
+      }
+    },
+    "continuousIntegration": {
+      "displayName": "Continuous Integration",
+      "description": "Configures continuous integration support for the solution",
+      "type": "parameter",
+      "datatype": "choice",
+      "defaultValue": "none",
+      "choices": [
+        {
+          "choice": "none",
+          "description": "No continuous integration files generated",
+          "displayName": "None"
+        },
+        {
+          "choice": "azure",
+          "description": "Continuous integration files generated for Azure Pipelines",
+          "displayName": "Azure Pipelines"
+        },
+        {
+          "choice": "github",
+          "description": "Continuous integration files generated for GitHub Actions",
+          "displayName": "GitHub Actions"
+        }
+      ]
+    },
+    "defaultBranchName": {
+      "displayName": "Default Branch Name",
+      "datatype": "text",
+      "description": "The name of the default branch for the repository",
+      "type": "parameter",
+      "defaultValue": "main",
+      "replaces": "$DefaultBranchName$"
+    },
+    "vscode": {
+      "displayName": "Visual Studio Code Debugging",
+      "type": "parameter",
+      "dataType": "bool",
+      "defaultValue": "true",
+      "description": "Sets up Visual Studio Code Debugging for WebAssembly and Skia Desktop"
+    },
+    "wasmPwaManifest": {
+      "displayName": "PWA Manifest",
+      "description": "Includes a manifest in the WebAssembly project to make the application a PWA",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "true"
+    },
+    "mauiEmbedding": {
+      "displayName": ".NET MAUI Embedding",
+      "description": "Configures application to embed .NET MAUI controls",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
+    "wasmMultiThreading": {
+      "displayName": "WASM Multi-Threading",
+      "description": "Configures application to use multi-threading in WebAssembly",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
+    "mediaElement": {
+      "displayName": "Media Element",
+      "description": "Configures application to bundle native assets required for the MediaElement",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
+    "skipRestore": {
+      "type": "parameter",
+      "datatype": "bool",
+      "displayName": "Skip Restore",
+      "description": "If specified, skips the automatic restore of the project on create.",
+      "defaultValue": "false"
+    },
+    "unoSdkVersion": {
+      "type": "parameter",
+      "datatype": "text",
+      "defaultValue": "DefaultUnoSdkVersion",
+      "replaces": "$UnoSdkVersion$"
+    },
+    "unoWasmBootstrapVersion": {
+      "type": "parameter",
+      "datatype": "text"
+    },
+    "unoWasmBootstrapVersionDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$WasmBootstrapServer$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net8.0')",
+            "value": "DefaultUnoWasmBootstrapVersionNet8"
+          },
+          {
+            "condition": "(tfm == 'net9.0')",
+            "value": "DefaultUnoWasmBootstrapVersionNet9"
+          }
+        ]
+      }
+    },
+    "unoWasmBootstrapVersionEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "unoWasmBootstrapVersion",
+        "fallbackVariableName": "unoWasmBootstrapVersionDefault"
+      },
+      "replaces": "$UnoWasmBootstrapVersion$"
+    },
+    "unoUITestHelpersVersion": {
+      "type": "parameter",
+      "datatype": "text",
+      "defaultValue": "DefaultUnoUITestHelpersVersion",
+      "replaces": "$UnoUITestHelpersVersion$"
+    },
+    // Developer Mode will only be enabled via Visual Studio
+    "enableDeveloperMode": {
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
+    "isVsix": {
+      "displayName": "isVsix",
+      "type": "parameter",
+      "datatype": "bool",
+      "defaultValue": "false"
+    },
+    "useAzurePipelines": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(continuousIntegration == 'azure')"
+    },
+    "useGitHubActions": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(continuousIntegration == 'github')"
+    },
+    "useTestSolutionFolder": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(testsEvaluator != 'none')"
+    },
+    "useCsharpMarkup": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(markup == 'csharp')"
+    },
+    "useXaml": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(markup == 'xaml')"
+    },
+    "dspGeneratorOutputType": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$DspGenerator$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(markup == 'xaml')",
+            "value": "Xaml"
+          },
+          {
+            "condition": "(markup == 'csharp')",
+            "value": "CSharp"
+          }
+        ]
+      }
+    },
+    "presetAppThemeDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "material"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "fluent"
+          }
+        ]
+      }
+    },
+    "appThemeEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "appTheme",
+        "fallbackVariableName": "presetAppThemeDefault"
+      }
+    },
+    "useDspGenerator":{
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(dspGeneratorEvaluator && appThemeEvaluator == 'material')"
+    },
+    "useMaterial": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(appThemeEvaluator == 'material')"
+    },
+    "useFluent": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(appThemeEvaluator == 'fluent')"
+    },
+    "useCupertino": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(appTheme == 'cupertino')"
+    },
+    "useUnoLottie": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(unoLottie || (useToolkit && appThemeEvaluator == 'fluent'))"
+    },
+    "themeBackgroundBrush": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$themeBackgroundBrush$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(appThemeEvaluator == 'material')",
+            "value": "BackgroundBrush"
+          },
+          {
+            "condition": "(appThemeEvaluator == 'fluent')",
+            "value": "ApplicationPageBackgroundThemeBrush"
+          },
+          {
+            "condition": "(appTheme == 'cupertino')",
+            "value": "CupertinoSystemBackgroundBrush"
+          }
+        ]
+      }
+    },
+    "presetDependencyInjectionDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "bool",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "useDependencyInjection": {
+      "type": "generated",
+      "datatype": "bool",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "dependencyInjection",
+        "fallbackVariableName": "presetDependencyInjectionDefault"
+      }
+    },
+    "presetToolkitDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "bool",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "useToolkit": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "toolkit",
+        "fallbackVariableName": "presetToolkitDefault"
+      }
+    },
+    "presetLoggingDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "serilog"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "none"
+          }
+        ]
+      }
+    },
+    "loggingEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "logging",
+        "fallbackVariableName": "presetLoggingDefault"
+      }
+    },
+    "useLoggingFallback": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(loggingEvaluator == 'none')"
+    },
+    "useLogging": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(useDependencyInjection && loggingEvaluator != 'none')"
+    },
+    "useSerilog": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(useDependencyInjection && loggingEvaluator == 'serilog')"
+    },
+    "useAspNetCoreSerilogPackage": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(server && useSerilog)"
+    },
+    "presetArchitectureDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "mvux"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "none"
+          }
+        ]
+      }
+    },
+    "architectureEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "architecture",
+        "fallbackVariableName": "presetArchitectureDefault"
+      }
+    },
+    "useMvux": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "architectureEvaluator == 'mvux'"
+    },
+    "useMvvm": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "architectureEvaluator == 'mvvm' || (architectureEvaluator == 'none' && useExtensionsNavigation)"
+    },
+    "useMauiMvvmOrMvux": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(navigationEvaluator != 'blank' && (useMvux || useMvvm))"
+    },
+    "useWasmMultiThreading": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(wasmMultiThreading)"
+    },
+    "useDesktop": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == desktop)"
+    },
+    "useAndroid": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == android)"
+    },
+    "useIOS": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == ios)"
+    },
+    "useMacCatalyst": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == maccatalyst)"
+    },
+    "useMobile": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(platforms == android || platforms == ios || platforms == maccatalyst)"
+    },
+    "useWasm": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == wasm)"
+    },
+    "useWasmPackageVersions": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == wasm && server)"
+    },
+    "useWinAppSdk": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == windows)"
+    },
+    "useNonMauiPlatforms": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(platforms == wasm || platforms == desktop)"
+    },
+    "mauiNamespaces": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$mauiNamespaces$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            // This works.... don't try to optimize it!
+            "condition": "(platforms == wasm && mauiEmbedding || platforms == desktop  && mauiEmbedding)",
+            "value": "\n      xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"\n      xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"\n      xmlns:maui=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\n      xmlns:not_maui=\"http://notmaui\"\n      mc:Ignorable=\"d not_maui\""
+          },
+          {
+            "condition": "true",
+            "value": "\n      xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"\n      xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"\n      mc:Ignorable=\"d\""
+          }
+        ]
+      }
+    },
+    "useDataContracts": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(useDependencyInjection && useHttp && server)"
+    },
+    "useUnitTests": {
+      "type": "generated",
+      "generator": "regexMatch",
+      "dataType": "bool",
+      "parameters": {
+        "source": "testsEvaluator",
+        "pattern": ".*unit.*"
+      }
+    },
+    "useUITests": {
+      "type": "generated",
+      "generator": "regexMatch",
+      "dataType": "bool",
+      "parameters": {
+        "source": "testsEvaluator",
+        "pattern": ".*ui.*"
+      }
+    },
+    "useServer": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(server)"
+    },
+    "useAndroidMaterial": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(useAndroid && !mauiEmbedding)"
+    },
+    "presetConfigurationDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "bool",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "configurationEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "configuration",
+        "fallbackVariableName": "presetConfigurationDefault"
+      }
+    },
+    "useConfiguration": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(useDependencyInjection && configurationEvaluator)"
+    },
+    "presetHttpDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "bool",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "httpEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "http",
+        "fallbackVariableName": "presetHttpDefault"
+      }
+    },
+    "useHttp": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(httpEvaluator && useConfiguration)"
+    },
+    "presetLocalizationDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "bool",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "true"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "false"
+          }
+        ]
+      }
+    },
+    "localizationEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "localization",
+        "fallbackVariableName": "presetLocalizationDefault"
+      }
+    },
+    "useLocalization": {
+      "type": "computed",
+      "dataType": "bool",
+      "value": "(localizationEvaluator && useConfiguration)"
+    },
+    "useArabic": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'ar'"
+    },
+    "useCzech": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'cs'"
+    },
+    "useDanish": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'da'"
+    },
+    "useDutch": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'nl'"
+    },
+    "useFrench": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'fr'"
+    },
+    "useGerman": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'de'"
+    },
+    "useSpanish": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'es'"
+    },
+    "useItalian": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'it'"
+    },
+    "useJapanese": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'ja'"
+    },
+    "useKorean": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'ko'"
+    },
+    "usePortuguese": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'pt-BR'"
+    },
+    "useRussian": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'ru'"
+    },
+    "useSwedish": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'sv'"
+    },
+    "useTurkish": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'tr'"
+    },
+    "useUkrainian": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'uk'"
+    },
+    "useVietnamese": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'vi'"
+    },
+    "useChineseSimplified": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'zh-Hans'"
+    },
+    "useChineseTraditional": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "cultures == 'zh-Hant'"
+    },
+    "ciTargetDotNetVersion": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$ciTargetDotNetVersion$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net8.0')",
+            "value": "8.0.x"
+          },
+          {
+            "condition": "(tfm == 'net9.0')",
+            "value": "9.0.x"
+          }
+        ]
+      }
+    },
+    "singleProjectTfms": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$SingleProjectTFMs$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-maccatalyst;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-maccatalyst;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-maccatalyst;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-android;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-android"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-maccatalyst;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-maccatalyst;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-maccatalyst;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-ios;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-maccatalyst;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-maccatalyst;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-maccatalyst;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-maccatalyst;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-maccatalyst;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-ios;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-maccatalyst;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-maccatalyst;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-maccatalyst;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-maccatalyst;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-android;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-android;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-android"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-ios;net8.0-maccatalyst;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-ios;net8.0-maccatalyst;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-ios;net8.0-maccatalyst;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-ios;net8.0-maccatalyst;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-ios;net8.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-ios;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-ios;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-ios;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-ios;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-ios;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-ios;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-ios;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-maccatalyst;net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-maccatalyst;net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-maccatalyst;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-maccatalyst;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-maccatalyst;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-windows10.0.19041;net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-windows10.0.19041;net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-windows10.0.19041;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net8.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net8.0-browserwasm;net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net8.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net8.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net8.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": ""
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-maccatalyst;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-maccatalyst;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-maccatalyst;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-maccatalyst;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-android;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-android"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-maccatalyst;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-ios;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-maccatalyst;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-maccatalyst;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-maccatalyst;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-maccatalyst;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == true && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-maccatalyst;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-ios;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-maccatalyst;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-maccatalyst;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-maccatalyst;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-maccatalyst;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-android;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-android;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms == android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-android"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-ios;net9.0-maccatalyst;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-ios;net9.0-maccatalyst;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-ios;net9.0-maccatalyst;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-ios;net9.0-maccatalyst;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-ios;net9.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-ios;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-ios;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-ios;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-ios;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-ios;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-ios;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-ios;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms == ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-ios"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-maccatalyst;net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-maccatalyst;net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-maccatalyst;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-maccatalyst;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-maccatalyst;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms == maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-maccatalyst"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-windows10.0.19041;net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-windows10.0.19041;net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-windows10.0.19041;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms == windows && platforms != wasm && platforms != desktop)",
+            "value": "net9.0-windows10.0.19041"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms == desktop)",
+            "value": "net9.0-browserwasm;net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms == wasm && platforms != desktop)",
+            "value": "net9.0-browserwasm"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms == desktop)",
+            "value": "net9.0-desktop"
+          },
+          {
+            "condition": "(tfm == 'net9.0' && useUnitTests == false && platforms != android && platforms != ios && platforms != maccatalyst && platforms != windows && platforms != wasm && platforms != desktop)",
+            "value": ""
+          }
+        ]
+      }
+    },
+    "toolkitNamespace": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$toolkitNamespace$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(useToolkit)",
+            "value": "\n      xmlns:utu=\"using:Uno.Toolkit.UI\""
+          },
+          {
+            "condition": "true",
+            "value": ""
+          }
+        ]
+      }
+    },
+    "materialNamespace": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$materialNamespace$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(appThemeEvaluator == 'material')",
+            "value": "\n      xmlns:um=\"using:Uno.Material\""
+          },
+          {
+            "condition": "true",
+            "value": ""
+          }
+        ]
+      }
+    },
+    "resourceStyleThemeNamespace": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$useThemesResourceNamespace$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(appThemeEvaluator == 'material' && (useToolkit == 'true' || useToolkit == true))",
+            "value": "\n       xmlns:utum=\"using:Uno.Toolkit.UI.Material\""
+          },
+          {
+            "condition": "(appThemeEvaluator == 'material')",
+            "value": "\n       xmlns:um=\"using:Uno.Material\""
+          },
+          {
+            "condition": "(appThemeEvaluator == 'cupertino')",
+            "value": "\n       xmlns:uc=\"using:Uno.Cupertino\""
+          },
+          {
+            "condition": "true",
+            "value": ""
+          }
+        ]
+      }
+    },
+    "toolkitSafeArea": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$toolkitSafeArea$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(useToolkit)",
+            "value": " utu:SafeArea.Insets=\"VisibleBounds\""
+          },
+          {
+            "condition": "(!useToolkit)",
+            "value": ""
+          }
+        ]
+      }
+    },
+    "shellRouteViewModel": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$shellRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "ShellModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "ShellViewModel"
+          }
+        ]
+      }
+    },
+    "mainRouteViewModel": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$mainRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "MainModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "MainViewModel"
+          }
+        ]
+      }
+    },
+    "secondRouteViewModel": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$secondRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "SecondModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "SecondViewModel"
+          }
+        ]
+      }
+    },
+    "loginRouteViewModel": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$loginRouteViewModel$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "LoginModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "LoginViewModel"
+          }
+        ]
+      }
+    },
+    "mainDataContext": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "string",
+      "replaces": "$mainDataContext$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "BindableMainModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "MainViewModel"
+          }
+        ]
+      }
+    },
+    "secondDataContext": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "string",
+      "replaces": "$secondDataContext$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "BindableSecondModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "SecondViewModel"
+          }
+        ]
+      }
+    },
+    "loginDataContext": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "string",
+      "replaces": "$loginDataContext$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(architectureEvaluator == 'mvux')",
+            "value": "BindableLoginModel"
+          },
+          {
+            "condition": "(architectureEvaluator == 'mvvm')",
+            "value": "LoginViewModel"
+          }
+        ]
+      }
+    },
+    "presetNavigationDefault": {
+      "type": "generated",
+      "generator": "switch",
+      "datatype": "string",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(preset == 'recommended')",
+            "value": "regions"
+          },
+          {
+            "condition": "(preset == 'blank')",
+            "value": "blank"
+          }
+        ]
+      }
+    },
+    "navigationEvaluator": {
+      "type": "generated",
+      "generator": "coalesce",
+      "parameters": {
+        "sourceVariableName": "navigation",
+        "fallbackVariableName": "presetNavigationDefault"
+      }
+    },
+    "navigationNamespace": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$navigationNamespace$",
+      "parameters": {
+        "evaluator": "C++",
+        "cases": [
+          {
+            "condition": "(navigationEvaluator == 'regions')",
+            "value": "\n      xmlns:uen=\"using:Uno.Extensions.Navigation.UI\""
+          },
+          {
+            "condition": "true",
+            "value": ""
+          }
+        ]
+      }
+    },
+    "useAuthentication": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useDependencyInjection && authentication != 'none'"
+    },
+    "useCustomAuthentication": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useAuthentication && authentication == 'custom'"
+    },
+    "useMsalAuthentication": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useAuthentication && authentication == 'msal'"
+    },
+    "useOidcAuthentication": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useAuthentication && authentication == 'oidc'"
+    },
+    "useWebAuthentication": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useAuthentication && authentication == 'web'"
+    },
+    // MSAL causes an error when used with WinAppSdk when self-contained
+    "useWinAppSdkSelfContained": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "authentication != 'msal'"
+    },
+    "useProtocolRedirect": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useWebAuthentication || useOidcAuthentication || useMsalAuthentication"
+    },
+    "useExtensionsNavigation": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useDependencyInjection && navigationEvaluator != 'blank'"
+    },
+    "useNavigationToolkit": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useExtensionsNavigation && useToolkit"
+    },
+    "useReactiveExtensionsNavigation": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useExtensionsNavigation && useMvux"
+    },
+    "useRegionsNav": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useExtensionsNavigation && navigationEvaluator == 'regions'"
+    },
+    "useFrameNav": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useDependencyInjection != 'true' || navigationEvaluator == 'blank'"
+    },
+    "coreProjectHasProjectReferences": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "(mauiEmbedding || (useDependencyInjection && useHttp && server))"
+    },
+    "useBusinessModelsNamespace": {
+      "type": "computed",
+      "datatype": "bool",
+      "value": "useDependencyInjection && (useConfiguration || navigationEvaluator != 'blank')"
+    },
+    "MsftExtensionsLoggingConsoleVersion": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$MsftExtensionsLoggingConsoleVersion$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net8.0')",
+            "value": "8.0.0"
+          },
+          {
+            "condition": "(tfm == 'net9.0')",
+            "value": "9.0.0-preview.1.24080.9"
+          }
+        ]
+      }
+    },
+    "MsftWindowsCompatibilityVersion": {
+      "type": "generated",
+      "generator": "switch",
+      "replaces": "$MsftWindowsCompatibilityVersion$",
+      "parameters": {
+        "evaluator": "C++",
+        "datatype": "string",
+        "cases": [
+          {
+            "condition": "(tfm == 'net8.0')",
+            "value": "8.0.2"
+          },
+          {
+            "condition": "(tfm == 'net9.0')",
+            "value": "9.0.0-preview.1.24081.3"
+          }
+        ]
+      }
+    },
+    "OS": {
+      "type": "bind",
+      "binding": "OS",
+      "defaultValue": "not_windows"
+    },
+    "osLower": {
+      "type": "generated",
+      "generator": "casing",
+      "parameters": {
+        "source": "OS",
+        "toLower": true
+      }
+    },
+    "canWindowsRestore": {
+      "type": "computed",
+      "value": "(osLower == 'windows' || osLower == 'windows_nt')",
+      "datatype": "bool"
+    }
+  },
+  "primaryOutputs": [
+    {
+      "condition": "!isVsix && canWindowsRestore",
+      "path": "MyExtensionsApp.1.sln"
+    },
+    {
+      "path": "MyExtensionsApp.1\\MyExtensionsApp.1.csproj"
+    },
+    {
+      "condition": "useServer",
+      "path": "MyExtensionsApp.1.Server\\MyExtensionsApp.1.Server.csproj"
+    },
+    {
+      "condition": "useDataContracts",
+      "path": "MyExtensionsApp.1.DataContracts\\MyExtensionsApp.1.DataContracts.csproj"
+    },
+    {
+      "condition": "mauiEmbedding",
+      "path": "MyExtensionsApp.1.MauiControls\\MyExtensionsApp.1.MauiControls.csproj"
+    },
+    {
+      "condition": "useUnitTests",
+      "path": "MyExtensionsApp.1.Tests\\MyExtensionsApp.1.Tests.csproj"
+    },
+    {
+      "condition": "useUITests",
+      "path": "MyExtensionsApp.1.UITests\\MyExtensionsApp.1.UITests.csproj"
+    },
+    {
+      "path": "Directory.Packages.props"
+    }
+  ],
+  "sources": [
+    {
+      "modifiers": [
+        {
+          "copyOnly": [
+            "**/*.png",
+            "**/*.jpg",
+            "**/*.gif",
+            "**/*.woff",
+            "**/*.ttf"
+          ]
+        },
+        {
+          "condition": "(!enableDeveloperMode)",
+          "exclude": [
+            "nuget.config"
+          ]
+        },
+        {
+          "condition": "(isVsix)",
+          "exclude": [
+            "MyExtensionsApp.1.sln"
+          ]
+        },
+        {
+          "condition": "(platforms != android)",
+          "exclude": [
+            "MyExtensionsApp.1/Platforms/Android/**/*"
+          ]
+        },
+        {
+          "condition": "(platforms != ios)",
+          "exclude": [
+            "MyExtensionsApp.1/Platforms/iOS/**/*"
+          ]
+        },
+        {
+          "condition": "(platforms != maccatalyst)",
+          "exclude": [
+            "MyExtensionsApp.1/Platforms/MacCatalyst/**/*"
+          ]
+        },
+        {
+          "condition": "(!useWasm)",
+          "exclude": [
+            "MyExtensionsApp.1/Platforms/WebAssembly**/*"
+          ]
+        },
+        {
+          "condition": "(!useDesktop)",
+          "exclude": [
+            "MyExtensionsApp.1/Platforms/Desktop/**/*"
+          ]
+        },
+        {
+          "condition": "(!useWinAppSdk)",
+          "exclude": [
+            "MyExtensionsApp.1/Platforms/Windows/**/*"
+          ]
+        },
+        {
+          "condition": "(!useServer)",
+          "exclude": [
+            "MyExtensionsApp.1.Server/**/*"
+          ]
+        },
+        {
+          "condition": "(!useDataContracts)",
+          "exclude": [
+            "MyExtensionsApp.1.DataContracts/**/*"
+          ]
+        },
+        {
+          "condition": "(useServer)",
+          "exclude": [
+            "MyExtensionsApp.1/Models/WeatherForecast.cs",
+            "MyExtensionsApp.1/Serialization/WeatherForecastContext.cs"
+          ]
+        },
+        {
+          "condition": "(useDependencyInjection)",
+          "exclude": [
+            "MyExtensionsApp.1/App.blank.cs"
+          ],
+          "rename": {
+            "MyExtensionsApp.1/App.recommended.cs": "MyExtensionsApp.1/App.xaml.cs"
+          }
+        },
+        {
+          "condition": "(!useDependencyInjection)",
+          "exclude": [
+            "MyExtensionsApp.1/App.recommended.cs",
+            "MyExtensionsApp.1/Business/**",
+            "MyExtensionsApp.1/Presentation/**"
+          ],
+          "rename": {
+            "MyExtensionsApp.1/App.blank.cs": "MyExtensionsApp.1/App.xaml.cs"
+          }
+        },
+        {
+          "condition": "(useFrameNav)",
+          "exclude": [
+            "MyExtensionsApp.1/Presentation/**"
+          ]
+        },
+        {
+          "condition": "(useDataContracts)",
+          "exclude": [
+            "MyExtensionsApp.1.Server/WeatherForecast.cs"
+          ]
+        },
+        {
+          "condition": "(!useDataContracts)",
+          "exclude": [
+            "MyExtensionsApp.1.DataContracts/**/*"
+          ]
+        },
+        {
+          "condition": "(!useMvux)",
+          "exclude": [
+            "MyExtensionsApp.1/Presentation/LoginModel.cs",
+            "MyExtensionsApp.1/Presentation/MainModel.cs",
+            "MyExtensionsApp.1/Presentation/SecondModel.cs",
+            "MyExtensionsApp.1/Presentation/ShellModel.cs"
+          ]
+        },
+        {
+          "condition": "(!useMvvm)",
+          "exclude": [
+            "MyExtensionsApp.1/Presentation/LoginViewModel.cs",
+            "MyExtensionsApp.1/Presentation/MainViewModel.cs",
+            "MyExtensionsApp.1/Presentation/SecondViewModel.cs",
+            "MyExtensionsApp.1/Presentation/ShellViewModel.cs"
+          ]
+        },
+        {
+          "condition": "(!useAuthentication)",
+          "exclude": [
+            "MyExtensionsApp.1/Presentation/Login*.*"
+          ]
+        },
+        {
+          "condition": "(!useWebAuthentication && !useOidcAuthentication)",
+          "exclude": [
+            "MyExtensionsApp.1/Platforms/Android/WebAuthenticationBrokerActivity.Android.cs"
+          ]
+        },
+        {
+          "condition": "(!useMsalAuthentication)",
+          "exclude": [
+            "MyExtensionsApp.1/Platforms/Android/MsalActivity.Android.cs"
+          ]
+        },
+        {
+          "condition": "(!useLocalization)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/ar/*",
+            "MyExtensionsApp.1/Strings/cs/*",
+            "MyExtensionsApp.1/Strings/da/*",
+            "MyExtensionsApp.1/Strings/de/*",
+            "MyExtensionsApp.1/Strings/es/*",
+            "MyExtensionsApp.1/Strings/fr/*",
+            "MyExtensionsApp.1/Strings/it/*",
+            "MyExtensionsApp.1/Strings/ja/*",
+            "MyExtensionsApp.1/Strings/ko/*",
+            "MyExtensionsApp.1/Strings/nl/*",
+            "MyExtensionsApp.1/Strings/pt-BR/*",
+            "MyExtensionsApp.1/Strings/ru/*",
+            "MyExtensionsApp.1/Strings/sv/*",
+            "MyExtensionsApp.1/Strings/tr/*",
+            "MyExtensionsApp.1/Strings/uk/*",
+            "MyExtensionsApp.1/Strings/vi/*",
+            "MyExtensionsApp.1/Strings/zh-Hans/*",
+            "MyExtensionsApp.1/Strings/zh-Hant/*"
+          ]
+        },
+        {
+          "condition": "(!useArabic)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/ar/*"
+          ]
+        },
+        {
+          "condition": "(!useCzech)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/cs/*"
+          ]
+        },
+        {
+          "condition": "(!useDanish)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/da/*"
+          ]
+        },
+        {
+          "condition": "(!useGerman)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/de/*"
+          ]
+        },
+        {
+          "condition": "(!useSpanish)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/es/*"
+          ]
+        },
+        {
+          "condition": "(!useFrench)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/fr/*"
+          ]
+        },
+        {
+          "condition": "(!useItalian)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/it/*"
+          ]
+        },
+        {
+          "condition": "(!useJapanese)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/ja/*"
+          ]
+        },
+        {
+          "condition": "(!useKorean)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/ko/*"
+          ]
+        },
+        {
+          "condition": "(!useDutch)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/nl/*"
+          ]
+        },
+        {
+          "condition": "(!usePortuguese)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/pt-BR/*"
+          ]
+        },
+        {
+          "condition": "(!useRussian)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/ru/*"
+          ]
+        },
+        {
+          "condition": "(!useSwedish)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/sv/*"
+          ]
+        },
+        {
+          "condition": "(!useTurkish)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/tr/*"
+          ]
+        },
+        {
+          "condition": "(!useUkrainian)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/uk/*"
+          ]
+        },
+        {
+          "condition": "(!useVietnamese)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/vi/*"
+          ]
+        },
+        {
+          "condition": "(!useChineseSimplified)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/zh-Hans/*"
+          ]
+        },
+        {
+          "condition": "(!useChineseTraditional)",
+          "exclude": [
+            "MyExtensionsApp.1/Strings/zh-Hant/*"
+          ]
+        },
+        {
+          "condition": "(!useHttp)",
+          "exclude": [
+            "MyExtensionsApp.1/Services/**",
+            "MyExtensionsApp.1/Models/WeatherForecast.cs",
+            "MyExtensionsApp.1/Serialization/WeatherForecastContext.cs"
+          ]
+        },
+        {
+          "condition": "(!useUnitTests)",
+          "exclude": [
+            "MyExtensionsApp.1.Tests/**/*"
+          ]
+        },
+        {
+          "condition": "(!useUITests)",
+          "exclude": [
+            "MyExtensionsApp.1.UITests/**/*"
+          ]
+        },
+        {
+          "condition": "(useAzurePipelines)",
+          "rename": {
+            "AzurePipelines": "build",
+            "AzurePipelines/Install-WindowsSdkISO.cips": "build/Install-WindowsSdkISO.ps1"
+          }
+        },
+        {
+          "condition": "(!useAzurePipelines)",
+          "exclude": [
+            "azure-pipelines.yml",
+            "AzurePipelines/**"
+          ]
+        },
+        {
+          "condition": "(useGitHubActions)",
+          "rename": {
+            "GitHub": ".github",
+            "GitHub/Install-WindowsSdkISO.cips": ".github/Install-WindowsSdkISO.ps1"
+          }
+        },
+        {
+          "condition": "(!useGitHubActions)",
+          "exclude": [
+            "GitHub/**"
+          ]
+        },
+        {
+          "condition": "(!vscode)",
+          "exclude": [
+            ".vscode/**/*"
+          ]
+        },
+        {
+          "condition": "(!wasmPwaManifest)",
+          "exclude": [
+            "MyExtensionsApp/Platforms/WebAssembly/manifest.json",
+            "MyExtensionsApp/Platforms/WebAssembly/Assets/AppIcon-*"
+          ]
+        },
+        {
+          "condition": "(!useCsharpMarkup)",
+          "exclude": [
+            "MyExtensionsApp.1/Styles/*.cs"
+          ]
+        },
+        {
+          "condition": "(useCsharpMarkup)",
+          "exclude": [
+            "MyExtensionsApp.1/Presentation/*.xaml",
+            "MyExtensionsApp.1/Styles/*.xaml",
+            "MyExtensionsApp.1/MainPage.xaml",
+            "MyExtensionsApp.1/Styles/.gitignore"
+          ],
+          "rename": {
+            "MyExtensionsApp.1/MainPage.xaml.cs": "MyExtensionsApp.1/MainPage.cs",
+            "MyExtensionsApp.1/Presentation/LoginPage.xaml.cs": "MyExtensionsApp.1/Presentation/LoginPage.cs",
+            "MyExtensionsApp.1/Presentation/MainPage.xaml.cs": "MyExtensionsApp.1/Presentation/MainPage.cs",
+            "MyExtensionsApp.1/Presentation/SecondPage.xaml.cs": "MyExtensionsApp.1/Presentation/SecondPage.cs",
+            "MyExtensionsApp.1/Presentation/Shell.xaml.cs": "MyExtensionsApp.1/Presentation/Shell.cs"
+          }
+        },
+        {
+          "condition": "(!useRegionsNav)",
+          "exclude": [
+            "MyExtensionsApp.1/Models/Entity.cs"
+          ]
+        },
+        {
+          "condition": "(!useMaterial)",
+          "exclude": [
+            "MyExtensionsApp.1/Styles/**"
+          ]
+        },
+        {
+          "condition": "(useExtensionsNavigation && useDependencyInjection)",
+          "exclude": [
+            "MyExtensionsApp.1/MainPage.xaml",
+            "MyExtensionsApp.1/MainPage.xaml.cs"
+          ]
+        },
+        {
+          "condition": "(useConfiguration)",
+          "exclude": [
+            "MyExtensionsApp.1.Tests/UnitTest1.cs"
+          ]
+        },
+        {
+          "condition": "(!useConfiguration)",
+          "exclude": [
+            "MyExtensionsApp.1/Models/AppConfig.cs",
+            "MyExtensionsApp.1/appsettings.*",
+            "MyExtensionsApp.1.Tests/AppInfoTests.cs"
+          ]
+        },
+        {
+          "condition": "(!mauiEmbedding)",
+          "exclude": [
+            "MyExtensionsApp.1/Assets/Fonts/**",
+            "MyExtensionsApp.1/Assets/Images/dotnet_bot.svg",
+            "MyExtensionsApp.1.MauiControls/**"
+          ]
+        },
+        {
+          "condition": "(!useRegionsNav)",
+          "exclude": [
+            "MyExtensionsApp.1/Assets/Images/back.svg"
+          ]
+        },
+        {
+          "condition": "(!useDspGenerator)",
+          "exclude": [
+            "MyExtensionsApp.1/Styles/ColorPaletteOverride.json"
+          ]
+        }
+      ]
+    }
+  ],
+  "postActions": [
+    {
+      "id": "nugetRestore",
+      "condition": "(!skipRestore)",
+      "description": "Restore NuGet packages required by this project",
+      "manualInstructions": [
+        {
+          "text": "Run 'dotnet restore'"
+        }
+      ],
+      "actionId": "210D431B-A78B-4D2F-B762-4ED3E3EA9025",
+      "continueOnError": true
+    }
+  ],
+  "SpecialCustomOperations": {
+    "**.appxmanifest": {
+      "operations": [
+        {
+          "type": "conditional",
+          "configuration": {
+            "if": [ "#if", "<!--#if" ],
+            "endif": [ "#endif", "<!--#endif" ],
+            "actionableIf": [ "<!--#if" ],
+            "actionableElse": [ "#else", "<!--#else" ],
+            "actionableElseif": [ "#elseif", "<!--#elseif", "#elif", "<!--#elif" ],
+            "trim": true,
+            "wholeLine": true,
+            "evaluator": "C++"
+          }
+        }
+      ]
+    }
+  }
+}
